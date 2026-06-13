@@ -59,9 +59,6 @@ public class ProdutoCarneDAO {
         } catch (SQLException e) { e.printStackTrace(); }
     }
 
-    // =====================================================================
-    // REQUISITO: CONSULTA CONSUMINDO A VIEW DO BANCO VIA JAVA
-    // =====================================================================
     public void exibirRelatorioRastreabilidade() {
         String sql = "SELECT * FROM public.vw_rastreabilidade_estoque";
         try (Connection conn = ConnectionFactory.getConnection();
@@ -103,14 +100,12 @@ public class ProdutoCarneDAO {
 
 
     public void executarItemVendaProcedure(int idVenda, int idProduto, double qtdKg) {
-        // Usamos tipos explícitos usando CAST (?::int, ?::int, ?::numeric) para o Postgres não rejeitar a assinatura
         String sql = "CALL public.sp_registrar_item_venda(?::int, ?::int, ?::numeric)";
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, idVenda);
             stmt.setInt(2, idProduto);
-            // Passamos como java.math.BigDecimal para casar perfeitamente com o NUMERIC do banco
             stmt.setBigDecimal(3, new java.math.BigDecimal(String.valueOf(qtdKg)));
 
             stmt.execute();
